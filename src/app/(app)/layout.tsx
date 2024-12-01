@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer"
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,7 +24,9 @@ export default function RootLayout({
 
         <div className="relative px-[20%]">
           <Navbar />
+          <Suspense fallback={<div>Loading...</div>}>
           {children}
+          </Suspense>
           <Footer />
         </div>
 

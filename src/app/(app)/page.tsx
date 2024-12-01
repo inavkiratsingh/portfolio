@@ -1,14 +1,12 @@
+'use client'
 import PasskeyModal from "@/components/PasskeyModal";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
-interface PageProps {
-  searchParams: {
-    admin?: string;
-  };
-}
 
-export default function page({ searchParams }: PageProps) {  
-  const isAdmin = searchParams.admin === "true";  
+export default function page() {  
+  const searchParams = useSearchParams();
+  const isAdmin = searchParams.get('admin');  
 
   return (
 
