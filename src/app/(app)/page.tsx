@@ -1,13 +1,22 @@
-import Navbar from "@/components/Navbar";
-import Image from "next/image";
+'use client'
+import PasskeyModal from "@/components/PasskeyModal";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 
-export default function page() {
+export default function page() {  
+  const searchParams = useSearchParams();
+  const isAdmin = searchParams.get('admin');  
+
   return (
+
+    
+    
     <div className="px-20 pt-14">
+      {isAdmin && <PasskeyModal />}
       <h1 className="text-6xl uppercase tracking-widest text-zinc-100">I'm Navkirat Singh</h1>
       <p className="text-zinc-400 py-6 leading-8">
+        
         Your friendly neighborhood frontend developer, UX architect, and
         JavaScript engineer. I spend my days (and often nights) painting the
         Internet canvas with Projects and lines of code, turning zeroes and ones
