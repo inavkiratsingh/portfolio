@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import TechnologyModel from "@/model/Technology";
-
+import { NextResponse } from "next/server";
 export async function POST(request: Request) {
     await dbConnect();
 
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 
         await newTech.save();
         
-        return Response.json(
+        return NextResponse.json(
             {
               success: true,
               message: 'Technology added successfully',
@@ -24,13 +24,13 @@ export async function POST(request: Request) {
         );
     } catch (error: any) {
         if(error.code === 11000) {
-            return Response.json(
+            return NextResponse.json(
                 { success: false, message: 'Technology already exists.' },
                 { status: 400 }
             );
         }else {
             console.log('Error', error);
-            return Response.json(
+            return NextResponse.json(
                 { success: false, message: 'Error adding Technology' },
                 { status: 500 }
             );

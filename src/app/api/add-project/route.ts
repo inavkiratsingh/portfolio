@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import ProjectModel from "@/model/Project";
-
+import { NextResponse } from "next/server";
 export async function POST(request: Request) {
     await dbConnect();
 
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
         await newProject.save();
         
         
-        return Response.json(
+        return NextResponse.json(
             {
               success: true,
               message: 'Project added successfully',
@@ -30,13 +30,13 @@ export async function POST(request: Request) {
         );
     } catch (error:any) {
         if(error.code === 11000) {
-            return Response.json(
+            return NextResponse.json(
                 { success: false, message: 'Project title already exists.' },
                 { status: 400 }
             );
         } else{
             console.log('Error', error);
-            return Response.json(
+            return NextResponse.json(
                 { success: false, message: 'Error adding Project' },
                 { status: 500 }
             );
