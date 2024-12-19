@@ -18,7 +18,8 @@ import { Input } from "@/components/ui/input"
 import { Description } from "@radix-ui/react-dialog"
 import { Textarea } from "./ui/textarea"
 import { Checkbox } from "./ui/checkbox"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import axios from "axios"
 
 const formSchema = z.object({
   title: z.string().min(5, {
@@ -46,44 +47,47 @@ const formSchema = z.object({
 })
 
 export function Projects() {
-
-  // const apiUrl = process.env.NEXT_PUBLIC_URI;
-  
-  // useEffect(() => {
-  //   async function fetchTechnologies() {
-  //     // console.log(apiUrl);
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    async function fetchTechnologies() {
       
-  //     try {
-  //       const response = await fetch(`${apiUrl}/get-technology`, {
-  //         method: "GET",
-  //       });
+      try {
+        const response = await fetch(`/api/get-technology`, {
+          method: "GET",
+        });
 
-  //       if (response.ok) {
-  //         console.log(response);
-          
-  //         const data = await response.json();
-  //         console.log(data);
-          
-  //       } else {
-  //         console.error("Failed to fetch technologies:", response.statusText);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching technologies:", error);
-  //     }
-  //   }
+        if (response.ok) {          
+          const tech = await response.json();
+          setData(tech.data);
+                    
+        } else {
+          console.error("Failed to fetch technologies:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching technologies:", error);
+      }
+    }
 
-  //   fetchTechnologies();
-  // }, []);
+    fetchTechnologies();
+  }, []);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   })
 
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    // console.log(values.technologies)
+
+    try {
+      console.log('in try');
+      
+      const response = await axios.post('/api/add-project', values);
+      console.log(response.data());
+      
+    } catch (error) {
+      console.log(error);      
+    }
   }
 
   return (
@@ -98,9 +102,6 @@ export function Projects() {
               <FormControl>
                 <Input placeholder="project title" className="focus:bg-zinc-800 text-zinc-400" {...field} />
               </FormControl>
-              {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
@@ -147,7 +148,33 @@ export function Projects() {
             <FormItem>
               <FormLabel className="text-zinc-100">Technologies used in this project</FormLabel>
               <FormControl>
-                <div className="flex items-center space-x-2">
+              <div className="space-y-2">
+                {data?.map((tech:any) => (
+                  <div key={tech._id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={tech._id}
+                      value={tech._id}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          field.onChange([...(field.value || []), tech._id]);
+                        } else {
+                          field.onChange(
+                            field.value.filter((item) => item !== tech._id)
+                          );
+                        }
+                      }}
+                      checked={field.value?.includes(tech._id) || false}
+                    />
+                    <label
+                      htmlFor={tech._id}
+                      className="text-sm font-medium leading-none text-zinc-400"
+                    >
+                      {tech.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+                {/* <div className="flex items-center space-x-2">
                   <Checkbox id="terms" />
                   <label
                     htmlFor="terms"
@@ -155,7 +182,7 @@ export function Projects() {
                   >
                     Accept terms and conditions
                   </label>
-                </div>
+                </div> */}
               </FormControl>
               {/* <FormDescription>
                 This is your public display name.
@@ -164,6 +191,35 @@ export function Projects() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="websiteLink"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-zinc-100">Website Link</FormLabel>
+              <FormControl>
+                <Input placeholder="Valid Live Website Link" className="focus:bg-zinc-800 text-zinc-400" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="githubLink"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-zinc-100">Github Link</FormLabel>
+              <FormControl>
+                <Input placeholder="Valid Github repositry link" className="focus:bg-zinc-800 text-zinc-400" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type="submit">Submit</Button>
       </form>
     </Form>
