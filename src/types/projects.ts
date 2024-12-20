@@ -8,4 +8,5 @@ export interface Project extends Document{
   technologies: Types.ObjectId[];
   websiteLink: string;
   githubLink: string;
+  publicImgId: string;
 }

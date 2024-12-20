@@ -6,8 +6,7 @@ export async function POST(request: Request) {
 
     try {
 
-        const { title, description, about, technologies, websiteLink, githubLink } = await request.json();
-        // console.log(title, about);
+        const { title, description, about, technologies, websiteLink, githubLink, publicImgId } = await request.json();
 
         const newProject = new ProjectModel({
             title,
@@ -15,7 +14,8 @@ export async function POST(request: Request) {
             about,
             technologies,
             websiteLink, 
-            githubLink
+            githubLink,
+            publicImgId
         });
 
         await newProject.save();

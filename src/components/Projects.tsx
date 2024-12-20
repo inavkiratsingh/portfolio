@@ -21,6 +21,8 @@ import { Checkbox } from "./ui/checkbox"
 import { useEffect, useState } from "react"
 import axios from "axios"
 
+import { CldImage, CldUploadWidget } from 'next-cloudinary';
+
 const formSchema = z.object({
   title: z.string().min(5, {
     message: "Title must be at least 5 characters.",
@@ -48,6 +50,8 @@ const formSchema = z.object({
 
 export function Projects() {
   const [data, setData] = useState([]);
+  const [publicImgId, setPublicImgId] = useState("");
+
   useEffect(() => {
     async function fetchTechnologies() {
       
@@ -77,13 +81,16 @@ export function Projects() {
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log(values.technologies)
-
+    console.log(values)
     try {
-      console.log('in try');
+      const update = {
+        ...values,
+        publicImgId
+      }
+      console.log('in try', update);
       
-      const response = await axios.post('/api/add-project', values);
-      console.log(response.data());
+      const response = await axios.post('/api/add-project', update);
+      console.log(response.data);
       
     } catch (error) {
       console.log(error);      
@@ -191,6 +198,31 @@ export function Projects() {
             </FormItem>
           )}
         />
+
+        <div>
+          {publicImgId && (
+            <CldImage src = {publicImgId} alt = {publicImgId} width = {"300"} height = {"300"} />
+          )}
+          <CldUploadWidget
+          onSuccess={({event, info}) => {
+            if (typeof info === 'object' && 'public_id' in info) {
+              setPublicImgId(info.public_id);
+            } else {
+              console.error("Unexpected 'info' format:", info);
+            }
+          }}
+          onError={(error) => console.error("Upload failed:", error)}
+          options={{ sources: ['local', 'url', 'unsplash'] }}
+          uploadPreset="shk7pnqu">
+            {({ open }) => {
+              return (
+                <button onClick={() => open()} className="bg-red-500 px-6 py-3 rounded-md text-zinc-200 mt-2">
+                  Upload an Image
+                </button>
+              );
+            }}
+          </CldUploadWidget>
+        </div>
 
         <FormField
           control={form.control}

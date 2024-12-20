@@ -30,6 +30,10 @@ const ProjectSchema: Schema<Project> = new mongoose.Schema({
         type: String,
         required: [true, 'Github Link is required'],
     },
+    publicImgId: {
+        type: String,
+        required: [true, 'Project Image is required'],
+    },
 })
 
 const ProjectModel = (mongoose.models.Project as mongoose.Model<Project>) || mongoose.model<Project>('Project', ProjectSchema);
