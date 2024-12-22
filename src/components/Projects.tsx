@@ -47,7 +47,17 @@ const formSchema = z.object({
   }),
 })
 
+
 export function Projects({ projectId }: any) {
+  function setForm(title:string, description:string, about:string, technologies:any, websiteLink:string, githubLink:string, publicImgId: string) {
+    form.setValue("title", title);
+    form.setValue("description", description);
+    form.setValue("about", about);
+    form.setValue("technologies", technologies);
+    form.setValue("websiteLink", websiteLink);
+    form.setValue("githubLink", githubLink);
+    setPublicImgId(publicImgId);
+  }
   const [data, setData] = useState([]);
   const [publicImgId, setPublicImgId] = useState("");
   const fetchProject = async () => {
@@ -55,13 +65,9 @@ export function Projects({ projectId }: any) {
       const response = await axios.get(
         `/api/get-project?projectId=${projectId}`
       );
-      const {title, description, about, technologies, websiteLink, githubLink} = response.data.data[0];
-      form.setValue("title", title);
-      form.setValue("description", description);
-      form.setValue("about", about);
-      form.setValue("technologies", technologies); // Assuming technologies is an array
-      form.setValue("websiteLink", websiteLink);
-      form.setValue("githubLink", githubLink);
+      const {title, description, about, technologies, websiteLink, githubLink, publicImgId} = response.data.data[0];
+      setForm(title, description, about, technologies, websiteLink, githubLink, publicImgId);
+      setForm
     } catch (error) {
       console.log(error);      
     } 
@@ -263,8 +269,48 @@ export function Projects({ projectId }: any) {
             </FormItem>
           )}
         />
+        {projectId ? (
+          <div className="flex space-x-4">
+            <Button 
+              type="button" 
+              onClick={async () => {
+                try {
+                  const update = {
+                    ...form.getValues(),
+                    publicImgId,
+                    projectId
+                  };
+                  console.log("Editing project:", update);
 
-        <Button type="submit">Submit</Button>
+                  const response = await axios.post(`/api/edit-project`, update);
+                  let project = response.data.data;
+                  setForm(project.title, project.description, project.about, project.technologies, project.websiteLink, project.githubLink, project.publicImgId);
+                } catch (error) {
+                  console.error("Error updating project:", error);
+                }
+              }}
+            >
+              Save
+            </Button>
+            <Button 
+              type="button" 
+              variant="destructive"
+              onClick={async () => {
+                try {
+                  await axios.delete(`/api/delete-project/?projectId=${projectId}`);
+                  console.log("Project deleted");
+                } catch (error) {
+                  console.error("Error deleting project:", error);
+                }
+              }}
+            >
+              Delete
+            </Button>
+          </div>
+        ) : (
+          <Button type="submit">Submit</Button>
+        )}
+
       </form>
     </Form>
   )
