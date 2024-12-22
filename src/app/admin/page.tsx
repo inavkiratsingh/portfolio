@@ -18,13 +18,15 @@ import {
 } from "@/components/ui/sidebar"
 
 export default function Page() {
-  const params = new URLSearchParams(window.location.search);
   let newProject, projectId;
-  if(params.has('new')) {
-    newProject = params.get('new');  
-  }
-  if(params.has('projectId')) {
-    projectId = params.get('projectId');
+  if(window){
+    const params = new URLSearchParams(window.location.search);
+    if(params.has('new')) {
+      newProject = params.get('new');  
+    }
+    if(params.has('projectId')) {
+      projectId = params.get('projectId');
+    }
   }
   
   return (
