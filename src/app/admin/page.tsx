@@ -1,3 +1,5 @@
+'use client'
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { Projects } from "@/components/Projects"
 import {
@@ -16,6 +18,15 @@ import {
 } from "@/components/ui/sidebar"
 
 export default function Page() {
+  const params = new URLSearchParams(window.location.search);
+  let newProject, projectId;
+  if(params.has('new')) {
+    newProject = params.get('new');  
+  }
+  if(params.has('projectId')) {
+    projectId = params.get('projectId');
+  }
+  
   return (
     <SidebarProvider className="dark">
       <AppSidebar />
@@ -38,7 +49,7 @@ export default function Page() {
           </Breadcrumb>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-            <Projects />
+            {newProject ? <Projects /> : <Projects projectId={projectId} />}
         </div>
       </SidebarInset>
     </SidebarProvider>

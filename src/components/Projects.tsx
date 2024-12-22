@@ -1,9 +1,9 @@
 "use client"
 
+import React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -20,7 +20,6 @@ import { Textarea } from "./ui/textarea"
 import { Checkbox } from "./ui/checkbox"
 import { useEffect, useState } from "react"
 import axios from "axios"
-
 import { CldImage, CldUploadWidget } from 'next-cloudinary';
 
 const formSchema = z.object({
@@ -48,9 +47,26 @@ const formSchema = z.object({
   }),
 })
 
-export function Projects() {
+export function Projects({ projectId }: any) {
   const [data, setData] = useState([]);
   const [publicImgId, setPublicImgId] = useState("");
+  const fetchProject = async () => {
+    try {
+      const response = await axios.get(
+        `/api/get-project?projectId=${projectId}`
+      );
+      const {title, description, about, technologies, websiteLink, githubLink} = response.data.data[0];
+      form.setValue("title", title);
+      form.setValue("description", description);
+      form.setValue("about", about);
+      form.setValue("technologies", technologies); // Assuming technologies is an array
+      form.setValue("websiteLink", websiteLink);
+      form.setValue("githubLink", githubLink);
+    } catch (error) {
+      console.log(error);      
+    } 
+  };
+
 
   useEffect(() => {
     async function fetchTechnologies() {
@@ -63,13 +79,17 @@ export function Projects() {
         if (response.ok) {          
           const tech = await response.json();
           setData(tech.data);
-                    
+        
         } else {
           console.error("Failed to fetch technologies:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching technologies:", error);
       }
+    }
+
+    if(projectId) {
+      fetchProject();
     }
 
     fetchTechnologies();
@@ -107,7 +127,11 @@ export function Projects() {
             <FormItem>
               <FormLabel className="text-zinc-100">Title</FormLabel>
               <FormControl>
-                <Input placeholder="project title" className="focus:bg-zinc-800 text-zinc-400" {...field} />
+                <Input
+                placeholder="project title" 
+                className="focus:bg-zinc-800 text-zinc-400" 
+                {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -181,19 +205,7 @@ export function Projects() {
                   </div>
                 ))}
               </div>
-                {/* <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" />
-                  <label
-                    htmlFor="terms"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-400"
-                  >
-                    Accept terms and conditions
-                  </label>
-                </div> */}
               </FormControl>
-              {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
