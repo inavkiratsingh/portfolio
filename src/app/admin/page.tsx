@@ -19,7 +19,7 @@ import {
 
 export default function Page() {
   let newProject, projectId;
-  if(window){
+  if(typeof window !== "undefined"){
     const params = new URLSearchParams(window.location.search);
     if(params.has('new')) {
       newProject = params.get('new');  
