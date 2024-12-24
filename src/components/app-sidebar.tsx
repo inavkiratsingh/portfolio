@@ -31,6 +31,29 @@ const truncateTitle = (title: string, maxLength: number) => {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [itmesApp, setItemsApp] = React.useState<any[]>([]);
+  const [technologies, setTechnologies] = React.useState<any[]>([]);
+  async function fetchTechnologies() {
+      
+    try {
+      const response = await fetch(`/api/get-technology`, {
+        method: "GET",
+      });
+
+      if (response.ok) {          
+        const tech = await response.json();
+        const items = tech.data.map((tech: any) => ({
+          title: tech.name,
+          url: `/admin/technologies/${tech._id}`,
+        }))
+        setTechnologies(items);
+      
+      } else {
+        console.error("Failed to fetch technologies:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching technologies:", error);
+    }
+  }
   const fetchAllProject = async () => {
     try {
       const response = await axios.get(
@@ -53,6 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
   useEffect(() => {
     fetchAllProject();
+    fetchTechnologies();
   }, []);
 
   
@@ -62,6 +86,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Projects",
         url: "#",
         items: itmesApp,
+      },
+      {
+        title: "Technologies",
+        url: "#",
+        items: technologies,
       },
     ],
   }
