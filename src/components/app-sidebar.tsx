@@ -45,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           title: tech.name,
           url: `/admin/technologies/${tech._id}`,
         }))
-        setTechnologies(items);
+        setTechnologies([{ title: "Add New Technology", url: "/admin/?tech=new"}, ...items]);
       
       } else {
         console.error("Failed to fetch technologies:", response.statusText);
@@ -90,7 +90,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: "Technologies",
         url: "#",
-        items: technologies,
+        items: [
+          { title: "Add New Technology", url: "/admin/technologies" },
+        ]
       },
     ],
   }
