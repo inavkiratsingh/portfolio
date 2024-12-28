@@ -1,12 +1,35 @@
+'use client'
 import Link from "next/link";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import ProjectCards from "@/components/ProjectCards";
 
 export default function page() {
+  const [projects, setProjects] = useState([]);
+  const [projects1, setProjects1] = useState([]);
+  const fetchAllProject = async () => {
+    try {
+      const response = await axios.get(
+        `/api/get-allprojects`
+      );
+      const projects = response.data.data;
+      let mid = Math.floor((projects.length / 2)+1);
+      const firstHalf = projects.slice(0, mid);
+      const secondHalf = projects.slice(mid);
+      setProjects(firstHalf);
+      setProjects1(secondHalf);
+      console.log(projects);
+      
+      
+    } catch (error) {
+      console.log(error);      
+    } 
+  };
 
-    const data = [
-        {id:1, image: "a", title: "abc", height: 100},
-        {id:2, image: "a", title: "bfgdsg", height: 300},
-        {id:3, image: "a", title: "abc", height: 200}
-    ]
+  useEffect(() => {
+    fetchAllProject();
+  }, [])
+  
 
   return (
     <div className="px-20 pt-14">
@@ -29,21 +52,17 @@ export default function page() {
       </div>
 
       <div className="flex flex-wrap gap-[20px]">
-        {/* {data.map((item) => (
-            <div key={item.id} className={`w-[calc(50%-10px)] h-[${item.height}] bg-zinc-500`}>
-                {item.title}
-            </div>
-        ))} */}
-        {data.map((item) => (
-        <div
-          key={item.id}
-          className={`w-[calc(50%-10px)] h-[${item.height}px] bg-gray-200 relative overflow-hidden`}
-        >
-          <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white p-2">
-            {item.title}
-          </div>
+        <div className={`w-[calc(50%-10px)]`}>
+          {projects.map((project:any) => (
+            <ProjectCards key={project?._id} data={project} />
+          ))}
         </div>
-      ))}
+
+        <div className={`w-[calc(50%-10px)]`}>
+          {projects1.map((project:any) => (
+            <ProjectCards key={project?._id} data={project} />
+          ))}
+        </div>
       </div>
       
     </div>
