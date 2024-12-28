@@ -7,7 +7,7 @@ export default function page() {
     ]
     return (
         <div className="px-20 pt-14">
-            <h1 className="text-6xl font-bold tracking-tight text-zinc-100">
+            <h1 className="text-6xl font-bold tracking-tighter text-zinc-100">
                 About Me.
             </h1>
 
