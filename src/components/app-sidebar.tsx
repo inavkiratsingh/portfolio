@@ -31,29 +31,8 @@ const truncateTitle = (title: string, maxLength: number) => {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [itmesApp, setItemsApp] = React.useState<any[]>([]);
-  const [technologies, setTechnologies] = React.useState<any[]>([]);
-  async function fetchTechnologies() {
-      
-    try {
-      const response = await fetch(`/api/get-technology`, {
-        method: "GET",
-      });
-
-      if (response.ok) {          
-        const tech = await response.json();
-        const items = tech.data.map((tech: any) => ({
-          title: tech.name,
-          url: `/admin/technologies/${tech._id}`,
-        }))
-        setTechnologies([{ title: "Add New Technology", url: "/admin/?tech=new"}, ...items]);
-      
-      } else {
-        console.error("Failed to fetch technologies:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error fetching technologies:", error);
-    }
-  }
+  const [itmesAbout, setItemsAbout] = React.useState<any[]>([]);
+  
   const fetchAllProject = async () => {
     try {
       const response = await axios.get(
@@ -74,9 +53,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       console.log(error);      
     } 
   };
+
+  const fetchAbout = async () => {
+    try {
+      const response = await axios.get(
+        `/api/get-allabout`
+      );
+      const about = response.data.data;
+      const items = about.map((about: any) => ({
+        title: truncateTitle(about.title, 25),
+        url: `/admin/about/${about._id}`,
+      }));
+  
+      setItemsAbout([
+        { title: "Add New About", url: "/admin/about/new" },
+        ...items,
+      ]);
+      
+    } catch (error) {
+      console.log(error);      
+    } 
+  };
   useEffect(() => {
     fetchAllProject();
-    fetchTechnologies();
+    fetchAbout();
   }, []);
 
   
@@ -93,6 +93,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           { title: "Add New Technology", url: "/admin/technologies" },
         ]
+      },
+      {
+        title: "About",
+        url: "#",
+        items: itmesAbout,
       },
     ],
   }
