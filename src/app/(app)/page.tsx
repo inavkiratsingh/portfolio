@@ -2,19 +2,24 @@
 import PasskeyModal from "@/components/PasskeyModal";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import React, { useEffect, useRef } from "react";
 
+
+export const sharedRef = React.createRef<HTMLDivElement>();
 
 export default function page() {  
   const searchParams = useSearchParams();
   const isAdmin = searchParams.get('admin');  
+
 
   return (
 
     
     
     <div className="px-20 pt-14">
+
       {isAdmin && <PasskeyModal />}
-      <h1 className="text-6xl uppercase tracking-widest text-zinc-100">I'm Navkirat Singh</h1>
+      <h1 className="hq text-6xl uppercase tracking-widest text-zinc-100">I'm Navkirat Singh</h1>
       <p className="text-zinc-400 py-6 leading-8">
         
         Your friendly neighborhood frontend developer, UX architect, and
